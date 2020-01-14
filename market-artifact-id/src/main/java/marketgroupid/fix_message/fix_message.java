@@ -101,9 +101,10 @@ public class fix_message {
 
     public static String makefix_market(String message_elements){
         String elements [] = message_elements.split(";");
+        System.out.println(("element: "+message_elements));
         String fixmessage = 
-        "Broker_ID="+elements[0]+
-        "|status="+elements[1]+"|";
+        "Broker_ID=("+elements[0]+
+        ")|status="+elements[1]+"|";
         fixmessage += "10="+ascii_checksum(fixmessage);
         return fixmessage;
     }

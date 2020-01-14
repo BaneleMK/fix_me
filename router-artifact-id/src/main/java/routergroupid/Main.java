@@ -39,6 +39,7 @@ class SubHandler implements Runnable{
     SubHandler(Socket socket){
         this.socket = socket;
         this.uniqueID = socket.toString();
+        this.uniqueID = takeOutUnnecessaryChars(this.uniqueID);
     }
     @Override
     public void run(){
@@ -68,11 +69,12 @@ class SubHandler implements Runnable{
                 System.out.println("\n" + uniqueID + "\n" + inputStreamLine + "\n");
 
                 //WRITING
-                printWriter = new PrintWriter(socket.getOutputStream());                    
+                printWriter = new PrintWriter(socket.getOutputStream());
                 if(socket.getLocalPort() == 5000){
                     switch(get_Market(inputStreamLine)){
                     //THIS IS WHERE THE FIX MESSAGE NEEDS TO BE PARSED AND SENT TO THE MARKET
                         case "1":
+                            System.out.println("Broker message: "+inputStreamLine);           
                             printWriter = new PrintWriter(Main.nyseSocket.getOutputStream());
                             // printWriter.println("1");printWriter.flush(); //THIS WILL BE A FIX MESSAGE
                             printWriter.println(inputStreamLine);printWriter.flush(); //THIS WILL BE A FIX MESSAGE
@@ -82,6 +84,7 @@ class SubHandler implements Runnable{
                             printWriter.println(inputStreamLine);printWriter.flush();
                             break;
                         case "2":
+                            System.out.println("Broker message: "+inputStreamLine);           
                             printWriter = new PrintWriter(Main.nyseSocket.getOutputStream());
                             // printWriter.println("2");printWriter.flush();
                             printWriter.println(inputStreamLine);printWriter.flush();
@@ -91,6 +94,7 @@ class SubHandler implements Runnable{
                             printWriter.println(inputStreamLine);printWriter.flush();
                             break; 
                         case "3":   
+                            System.out.println("Broker message: "+inputStreamLine);           
                             printWriter = new PrintWriter(Main.nyseSocket.getOutputStream());
                             // printWriter.println("3");printWriter.flush();
                             printWriter.println(inputStreamLine);printWriter.flush();
@@ -100,6 +104,7 @@ class SubHandler implements Runnable{
                             printWriter.println(inputStreamLine);printWriter.flush();
                             break;
                         case "4":
+                            System.out.println("Broker message: "+inputStreamLine);           
                             printWriter = new PrintWriter(Main.lseSocket.getOutputStream());
                             // printWriter.println("1");printWriter.flush(); //THIS WILL BE A FIX MESSAGE
                             printWriter.println(inputStreamLine);printWriter.flush(); //THIS WILL BE A FIX MESSAGE
@@ -109,6 +114,7 @@ class SubHandler implements Runnable{
                             printWriter.println(inputStreamLine);printWriter.flush();
                             break;
                         case "5":
+                            System.out.println("Broker message: "+inputStreamLine);           
                             printWriter = new PrintWriter(Main.lseSocket.getOutputStream());
                             // printWriter.println("2");printWriter.flush();
                             printWriter.println(inputStreamLine);printWriter.flush();
@@ -118,6 +124,7 @@ class SubHandler implements Runnable{
                             printWriter.println(inputStreamLine);printWriter.flush();
                             break; 
                         case "6":   
+                            System.out.println("Broker message: "+inputStreamLine);           
                             printWriter = new PrintWriter(Main.lseSocket.getOutputStream());
                             // printWriter.println("3");printWriter.flush();
                             printWriter.println(inputStreamLine);printWriter.flush();
@@ -127,6 +134,7 @@ class SubHandler implements Runnable{
                             printWriter.println(inputStreamLine);printWriter.flush();
                             break;
                         case "7":
+                            System.out.println("Broker message: "+inputStreamLine);           
                             printWriter = new PrintWriter(Main.jseSocket.getOutputStream());
                             // printWriter.println("1");printWriter.flush(); //THIS WILL BE A FIX MESSAGE
                             printWriter.println(inputStreamLine);printWriter.flush(); //THIS WILL BE A FIX MESSAGE
@@ -136,6 +144,7 @@ class SubHandler implements Runnable{
                             printWriter.println(inputStreamLine);printWriter.flush();
                             break;
                         case "8":
+                            System.out.println("Broker message: "+inputStreamLine);           
                             printWriter = new PrintWriter(Main.jseSocket.getOutputStream());
                             // printWriter.println("2");printWriter.flush();
                             printWriter.println(inputStreamLine);printWriter.flush();
@@ -145,6 +154,7 @@ class SubHandler implements Runnable{
                             printWriter.println(inputStreamLine);printWriter.flush();
                             break; 
                         case "9":   
+                            System.out.println("Broker message: "+inputStreamLine);           
                             printWriter = new PrintWriter(Main.jseSocket.getOutputStream());
                             // printWriter.println("3");printWriter.flush();
                             printWriter.println(inputStreamLine);printWriter.flush();
@@ -220,7 +230,6 @@ class SubHandler implements Runnable{
     }
 
     public String get_Instrument(String fixmessage){
-        System.out.println("get_instrument fixmessage: "+fixmessage);
         if (!fixmessage.isBlank()){
             String[] elem = fixmessage.split("\\|");
             String instr = elem[1].split("=")[1];
@@ -239,7 +248,6 @@ class SubHandler implements Runnable{
     }
 
     public String get_Market(String fixmessage){
-        System.out.println("get_market fixmessage router: "+fixmessage);
         if (!fixmessage.isBlank()){
             String[] elem = fixmessage.split("\\|");
             String market = elem[3].split("=")[1];
@@ -263,6 +271,18 @@ class SubHandler implements Runnable{
         long temp_checksum = 0;
         temp_checksum = temp_sum % 256;
         return temp_checksum;
+    }
+    public static String takeOutUnnecessaryChars(String uniqueID){
+        StringBuilder stringBuilder = new StringBuilder();
+        String s0 = uniqueID.split("=")[0];
+        String s1 = uniqueID.split("=")[1];
+        String s2 = uniqueID.split("=")[2];
+        String s3 = uniqueID.split("=")[3];
+        stringBuilder.append(s0);
+        stringBuilder.append(s1);
+        stringBuilder.append(s2);
+        stringBuilder.append(s3);
+        return(stringBuilder.toString());
     }
 }
 

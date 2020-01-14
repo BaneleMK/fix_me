@@ -45,7 +45,6 @@ public class fix_message {
 
     public static boolean isfix(String fixmessage){
         if (fixmessage.contains("|") && !fixmessage.isBlank()){
-            System.out.println("true");
             return true;
         } else
             return false;
@@ -65,7 +64,6 @@ public class fix_message {
             String[] elem = fixmessage.split("\\|");
             if (elem.length > 1){
                 String instr = elem[1].split("=")[1];
-                System.out.println("instrument: "+instr);
                 return instr;
             } else 
                 return "0";

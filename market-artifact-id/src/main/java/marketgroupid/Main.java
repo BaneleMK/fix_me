@@ -35,31 +35,37 @@ public class Main{
                 String inputStreamLine = bufferedReader.readLine();
                 if(inputStreamLine == null){System.out.println("\nRouter disconnected\n");break;}
                 System.out.println("\nFIX Message Market: "+inputStreamLine);
-                
+
                 switch (fix_message.get_Instrument(inputStreamLine)) {
                     // THIS WILL PARSE THE FIX MESSAGE RECEIVED
                     case "1":
-                        marketInput = market.decrementInstrument1Val(100);
+                        if (fix_message.checksum_verification(inputStreamLine)){
+                        marketInput = market.decrementInstrument1Val(fix_message.get_ID(inputStreamLine),100);
                         printWriter.println(marketInput); printWriter.flush();
                         break;
+                        }
                     case "2":
-                        marketInput = market.decrementInstrument2Val(100);
+                        if (fix_message.checksum_verification(inputStreamLine)){
+                        marketInput = market.decrementInstrument2Val(fix_message.get_ID(inputStreamLine),100);
                         printWriter.println(marketInput); printWriter.flush();
                         break;
+                        }
                     case "3":
-                        marketInput = market.decrementInstrument3Val(100);
+                        if (fix_message.checksum_verification(inputStreamLine)){
+                        marketInput = market.decrementInstrument3Val(fix_message.get_ID(inputStreamLine),100);
                         printWriter.println(marketInput); printWriter.flush();
                         break;
+                        }
                     default:
                         System.out.println("\nRouter\n" + inputStreamLine + "\n");
                         printWriter = new PrintWriter(socket.getOutputStream());
                         System.out.println(market.formattedList());
                         //marketInput = scanner.nextLine();
-                        Thread.sleep(100);
+                        Thread.sleep(1000);
                         printWriter.println(marketInput); printWriter.flush();
                         break;
                 }
-
+                
             }
         } catch (Exception e){System.err.println(e.getMessage());}
     }
@@ -111,9 +117,9 @@ class Market {
     public int getInstrument1Val(){return instrument1Val;}
     public int getInstrument2Val(){return instrument2Val;}
     public int getInstrument3Val(){return instrument3Val;}
-    public String decrementInstrument1Val(int n){if (instrument1Val >= 100){instrument1Val -= n;return(fix_message.makefix_market("THATLONGID;purchase successful"));}else{return(fix_message.makefix_market("THATLONGID;purchase unsuccessful"));}}
-    public String decrementInstrument2Val(int n){if (instrument2Val >= 100){instrument2Val -= n;return(fix_message.makefix_market("THATLONGID;purchase successful"));}else{return(fix_message.makefix_market("THATLONGID;purchase unsuccessful"));}}
-    public String decrementInstrument3Val(int n){if (instrument3Val >= 100){instrument3Val -= n;return(fix_message.makefix_market("THATLONGID;purchase successful"));}else{return(fix_message.makefix_market("THATLONGID;purchase unsuccessful"));}}
+    public String decrementInstrument1Val(String ID ,int n){if (instrument1Val >= 100){instrument1Val -= n;return(fix_message.makefix_market(ID+";purchase successful"));}else{return(fix_message.makefix_market(ID+";purchase unsuccessful"));}}
+    public String decrementInstrument2Val(String ID ,int n){if (instrument2Val >= 100){instrument2Val -= n;return(fix_message.makefix_market(ID+";purchase successful"));}else{return(fix_message.makefix_market(ID+";purchase unsuccessful"));}}
+    public String decrementInstrument3Val(String ID ,int n){if (instrument3Val >= 100){instrument3Val -= n;return(fix_message.makefix_market(ID+";purchase successful"));}else{return(fix_message.makefix_market(ID+";purchase unsuccessful"));}}
 /* 
     public String decrementInstrument2Val(int n){ instrument2Val -= n; return("purchase successful");}
     public String decrementInstrument3Val(int n){ instrument3Val -= n; return("purchase successful");} */
